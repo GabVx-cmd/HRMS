@@ -1,7 +1,7 @@
 <?php
 // This class represents a leave request made by an employee, including attributes such as leave ID, employee ID, leave type, start date, end date, reason for leave, and status of the request.
 class LeaveRequest {
-    private ?int $leaveId;
+    private $leaveId;
     private $employeeId;
     private $leaveType;
     private $startDate;
@@ -9,7 +9,8 @@ class LeaveRequest {
     private $reason;
     private $status;
 
-    public function __construct( int $employeeId, string $leaveType, string $startDate, string $endDate, string $reason, string $status) {
+    public function __construct(?int $leaveId, int $employeeId, string $leaveType, string $startDate, string $endDate, string $reason, string $status) {
+        $this->leaveId = $leaveId;
         $this->employeeId = $employeeId;
         $this->leaveType = $leaveType;
         $this->startDate = $startDate;
