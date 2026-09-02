@@ -41,12 +41,9 @@ class Employee extends Person {
             if(!mysqli_stmt_execute($stmt)){
                 throw new Exception(mysqli_error($conn));
             }
-            $result = mysqli_stmt_get_result($stmt);
+            $this->id = (int) mysqli_insert_id($conn);
             mysqli_stmt_close($stmt);
-            if($result){
-                $this->id = (int) mysqli_insert_id($conn);
-            }
-            return $result;
+            return true;
         } catch(Exception $e) {
             error_log("Error creating employee: " . $e->getMessage());
             return false;
@@ -54,7 +51,15 @@ class Employee extends Person {
     }
 
     // Function to update an existing employee record in the database
-    public function update($conn): bool{
+    public function update(
+            $conn,
+            $firstName,
+            $lastName,
+            $email,
+            $department,
+            $position,
+            $date_hired
+        ): bool{
         $sql = "UPDATE employees SET
             first_name = ?,
             last_name = ?,
@@ -71,29 +76,25 @@ class Employee extends Person {
             mysqli_stmt_bind_param(
                 $stmt,
                 "ssssssi",
-                $this->firstName,
-                $this->lastName,
-                $this->email,
-                $this->department,
-                $this->position,
-                $this->date_hired,
+                $firstName,
+                $lastName,
+                $email,
+                $department,
+                $position,
+                $date_hired,
                 $this->id
             );
             if(!mysqli_stmt_execute($stmt)){
                 throw new Exception("No rows updated");
             }
-            $result = mysqli_stmt_get_result($stmt);
-            $row = mysqli_fetch_assoc($result);
             mysqli_stmt_close($stmt);
-            if($row){
-                $this->firstName = $row['first_name'];
-                $this->lastName = $row['last_name'];
-                $this->email = $row['email'];
-                $this->department = $row['department'];
-                $this->position = $row['position'];
-                $this->date_hired = $row['date_hired'];
-            }
-            return $result;
+            $this->firstName = $firstName;
+            $this->lastName = $lastName;
+            $this->email = $email;
+            $this->department = $department;
+            $this->position = $position;
+            $this->date_hired = $date_hired;
+            return true;
         } catch (Exception $e) {
             error_log("Error updating employee: " . $e->getMessage());
             return false;
@@ -112,9 +113,8 @@ class Employee extends Person {
             if(!mysqli_stmt_execute($stmt)){
                 throw new Exception(mysqli_error($conn));
             }
-            $result = mysqli_stmt_get_result($stmt);
             mysqli_stmt_close($stmt);
-            return $result;
+            return true;
         } catch (Exception $e) {
             error_log("Error deleting employee: " . $e->getMessage());
             return false;
