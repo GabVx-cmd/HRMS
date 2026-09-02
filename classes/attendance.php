@@ -2,14 +2,14 @@
 // This class represents an attendance record for an employee, including attributes such as attendance ID, employee ID, log date, time in, time out, and status.
 // It includes methods for logging time in and time out, as well as retrieving attendance records by employee ID.
 class Attendance {
-    private $attendanceId;
+    private ?int $attendanceId;
     private $employeeId;
     private $logDate;
     private $timeIn;
     private $timeOut;
     private $status;
 
-    public function __construct(int $attendanceId, int $employeeId, string $logDate, string $timeIn, string $timeOut, string $status) {
+    public function __construct(?int $attendanceId, int $employeeId, string $logDate, string $timeIn, ?string $timeOut = null, string $status) {
         $this->attendanceId = $attendanceId;
         $this->employeeId = $employeeId;
         $this->logDate = $logDate;
@@ -45,6 +45,7 @@ class Attendance {
             }
             $result = mysqli_stmt_get_result($stmt);
             mysqli_stmt_close($stmt);
+            $this->attendanceId = (int) mysqli_insert_id($conn);
             return $result;
         } catch(Exception $e) {
             error_log("Error logging time in: " . $e->getMessage());    
@@ -110,6 +111,32 @@ class Attendance {
             return $attendanceRecords ?: null;
         } catch (Exception $e){
             error_log("Error retrieving attendance records: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public static function getToday($conn): ?array {
+        $sql = 'SELECT * FROM attendance 
+        WHERE log_date >= CURDATE() AND 
+        log_date < CURDATE() + INTERVAL 1 DAY';
+        try {
+            $result = mysqli_query($conn, $sql);
+            if(mysqli_num_rows($result) > 0){
+                $attendanceRecords = [];
+                while($row = mysqli_fetch_assoc($result)){
+                    $attendanceRecords[] = new Attendance(
+                        $row['attendance_id'],
+                        $row['employee_id'],
+                        $row['log_date'],
+                        $row['time_in'],
+                        $row['time_out'],
+                        $row['status']
+                    );
+                }
+                return $attendanceRecords;
+            }
+        } catch (Exception $e) {
+            error_log(''. $e->getMessage());
             return null;
         }
     }
