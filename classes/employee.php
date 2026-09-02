@@ -6,7 +6,7 @@ class Employee extends Person {
     private $position;
     private $date_hired;
 
-    public function __construct(int $id, string $firstName, string $lastName, string $email, string $department, string $position, string $date_hired) {
+    public function __construct(?int $id, string $firstName, string $lastName, string $email, string $department, string $position, string $date_hired) {
         parent::__construct($id, $firstName, $lastName, $email);
         $this->department = $department;
         $this->position = $position;
@@ -155,6 +155,30 @@ class Employee extends Person {
             return null;
         } catch (Exception $e) {
             error_log("Error retrieving employee by ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public static function getAll($conn): ?array {
+        try {
+            $sql = "SELECT * FROM employees";
+            $result = mysqli_query($conn, $sql);
+            $employees = [];
+            while($row = mysqli_fetch_assoc($result)){
+                $employees[] = new Employee (
+                    $row['employee_id'], 
+                    $row['first_name'], 
+                    $row['last_name'], 
+                    $row['email'], 
+                    $row['department'], 
+                    $row['position'], 
+                    $row['date_hired']
+                );
+            }
+            mysqli_free_result($result);
+            return $employees;
+        } catch (Exception $e) {
+            error_log("Error retrieving all employees: " . $e->getMessage());
             return null;
         }
     }
