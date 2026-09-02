@@ -1,12 +1,13 @@
 <?php 
 // This base class represents a person with basic attributes such as ID, first name, last name, and email. It serves as a parent class for employees.
 class Person { 
-    protected ?int $id;
+    protected $id;
     protected $firstName;
     protected $lastName;
     protected $email;
 
-    public function __construct(int $id, string $firstName, string $lastName, string $email) {
+    public function __construct(?int $id, string $firstName, string $lastName, string $email) {
+        $this->id = $id;    
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
