@@ -43,10 +43,9 @@ class Attendance {
             if(!mysqli_stmt_execute($stmt)){
                 throw new Exception(mysqli_error($conn));
             }
-            $result = mysqli_stmt_get_result($stmt);
-            mysqli_stmt_close($stmt);
             $this->attendanceId = (int) mysqli_insert_id($conn);
-            return $result;
+            mysqli_stmt_close($stmt);
+            return true;
         } catch(Exception $e) {
             error_log("Error logging time in: " . $e->getMessage());    
             return false;
@@ -73,9 +72,8 @@ class Attendance {
             if(!mysqli_stmt_execute($stmt)){
                 throw new Exception(mysqli_error($conn));
             }
-            $result = mysqli_stmt_get_result($stmt);
             mysqli_stmt_close($stmt);
-            return $result;
+            return true;
         } catch(Exception $e) {
             error_log("Error logging time out: " . $e->getMessage());
             return false;
