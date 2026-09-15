@@ -13,7 +13,12 @@ class LeaveRequest extends User{
      * Inherits from the User class and initializes the database connection
      */
     public function __construct(PDO $db) {
-        parent::__construct($db);
+        try {
+            parent::__construct($db);
+        } catch (Throwable $e) {
+            error_log("Leave request initialization error: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -26,18 +31,22 @@ class LeaveRequest extends User{
      * @return bool The result of the insert operation. Returns true if the leave request was successfully filed, false otherwise.
      */
     public function fileLeave(int $employee_id, string $reason, string $leaveType, string $startDate, string $endDate):bool {
-    $leaveType = strtoupper($leaveType);    
-    $query = "INSERT INTO " .$this->leaveTable . " (employee_id, reason, leave_type, start_date, end_date, status, date_filed)
-        VALUES (:employee_id, :leave_type, :start_date, :end_date, :reason, 'PENDING', CURDATE())";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
-        $stmt->bindParam(':leave_type', $leaveType, PDO::PARAM_STR);
-        $stmt->bindParam(':start_date', $startDate, PDO::PARAM_STR);
-        $stmt->bindParam(':end_date', $endDate, PDO::PARAM_STR);
-        $stmt->bindParam(':reason', $reason, PDO::PARAM_STR);
-        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        try {
+            $leaveType = strtoupper($leaveType);
+            $query = "INSERT INTO " .$this->leaveTable . " (employee_id, reason, leave_type, start_date, end_date, status, date_filed)
+                VALUES (:employee_id, :reason, :leave_type, :start_date, :end_date, 'PENDING', CURDATE())";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
+            $stmt->bindParam(':leave_type', $leaveType, PDO::PARAM_STR);
+            $stmt->bindParam(':start_date', $startDate, PDO::PARAM_STR);
+            $stmt->bindParam(':end_date', $endDate, PDO::PARAM_STR);
+            $stmt->bindParam(':reason', $reason, PDO::PARAM_STR);
 
-        return $stmt->execute();
+            return $stmt->execute();
+        } catch (Throwable $e) {
+            error_log("Leave request filing error: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -47,18 +56,23 @@ class LeaveRequest extends User{
      * @return array The leave requests of the specified employee, or an empty array if no leave requests are found.
      */
     public function getLeaveRequests(int $employee_id, ?string $status): array {
-        $query = "SELECT * FROM " . $this->leaveTable . " WHERE employee_id = :employee_id";
-        if(!empty($status)) {
-            $query .= " AND status = :status";
+        try {
+            $query = "SELECT * FROM " . $this->leaveTable . " WHERE employee_id = :employee_id";
+            if(!empty($status)) {
+                $query .= " AND status = :status";
+            }
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
+            if(!empty($status)) {
+                $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+            }
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            error_log("Leave request lookup error: " . $e->getMessage());
+            return [];
         }
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
-        if(!empty($status)) {
-            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
-        }
-        $stmt->execute();
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -67,17 +81,22 @@ class LeaveRequest extends User{
      * @return array An array of leave requests matching the specified status, or all leave requests if no status is provided.
      */
     public function getAllLeaveRequests(?string $status = null): array {    
-        $query = "SELECT * FROM " . $this->leaveTable;
-        match($status) {
-            "PENDING" => $query .= " WHERE status = 'PENDING'",
-            "APPROVED" => $query .= " WHERE status = 'APPROVED'",
-            "REJECTED" => $query .= " WHERE status = 'REJECTED'",
-            default => ""
-        };
-        $query .= " ORDER BY date_filed ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM " . $this->leaveTable;
+            match($status) {
+                "PENDING" => $query .= " WHERE status = 'PENDING'",
+                "APPROVED" => $query .= " WHERE status = 'APPROVED'",
+                "REJECTED" => $query .= " WHERE status = 'REJECTED'",
+                default => ""
+            };
+            $query .= " ORDER BY date_filed ASC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            error_log("Leave request list error: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -87,11 +106,16 @@ class LeaveRequest extends User{
      * @return bool The result of the update operation. Returns true if the status was successfully updated, false otherwise.
      */
     public function updateLeaveStatus(int $employee_id, string $status): bool {
-        $query = "UPDATE ". $this->leaveTable . " SET status = :status WHERE employee_id = :employee_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":employee_id", $employee_id, PDO::PARAM_INT);
-        $stmt->bindParam(":status", $status, PDO::PARAM_STR);
-        return $stmt->execute();
+        try {
+            $query = "UPDATE ". $this->leaveTable . " SET status = :status WHERE employee_id = :employee_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":employee_id", $employee_id, PDO::PARAM_INT);
+            $stmt->bindParam(":status", $status, PDO::PARAM_STR);
+            return $stmt->execute();
+        } catch (Throwable $e) {
+            error_log("Leave request status update error: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
