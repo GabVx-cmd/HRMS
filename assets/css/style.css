@@ -1,0 +1,366 @@
+/* ==========================================================================
+   HRMS — Design Tokens
+   ========================================================================== */
+:root {
+  --color-bg: #FAF9F5;
+  --color-surface: #F1EFE8;
+  --color-ink: #1E2A32;
+  --color-muted: #5C6670;
+  --color-accent: #2B5D50;
+  --color-accent-hover: #234A40;
+  --color-border: #D8D3C8;
+  --color-danger: #A23B3B;
+  --color-danger-hover: #832F2F;
+
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius: 3px;
+  --sidebar-width: 220px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--color-ink);
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+
+p { margin: 0 0 12px 0; }
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   App shell
+   ========================================================================== */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  padding: 28px 20px;
+}
+
+.sidebar-brand {
+  margin-bottom: 32px;
+}
+
+.sidebar-brand .mark {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.sidebar-brand .sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.sidebar-nav { list-style: none; margin: 0; padding: 0; }
+
+.sidebar-nav li { margin-bottom: 4px; }
+
+.sidebar-nav a {
+  display: block;
+  padding: 8px 10px;
+  margin-left: -10px;
+  border-left: 2px solid transparent;
+  color: var(--color-ink);
+  font-size: 14px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.sidebar-nav a:hover {
+  background: var(--color-surface);
+  text-decoration: none;
+}
+
+.sidebar-nav a.active {
+  border-left-color: var(--color-accent);
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1100px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.btn:hover { text-decoration: none; }
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--color-accent-hover); }
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-ink);
+}
+.btn-secondary:hover { background: var(--color-surface); }
+
+.btn-danger {
+  background: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+.btn-danger:hover { background: var(--color-danger); color: #fff; }
+
+.btn-sm { padding: 5px 10px; font-size: 13px; }
+
+/* ==========================================================================
+   Stat blocks (dashboard)
+   ========================================================================== */
+.stat-row {
+  display: flex;
+  gap: 40px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 24px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat .value {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stat .label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-ink);
+  color: var(--color-ink);
+}
+
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+tbody tr:hover { background: var(--color-surface); }
+
+.actions-cell { white-space: nowrap; text-align: right; }
+.actions-cell a { margin-left: 8px; }
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  max-width: 640px;
+}
+
+.form-field { display: flex; flex-direction: column; }
+.form-field.full { grid-column: 1 / -1; }
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--color-ink);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-ink);
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.form-field .error {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+.form-field.has-error input,
+.form-field.has-error select {
+  border-color: var(--color-danger);
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Filters / toolbar (employee list)
+   ========================================================================== */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.toolbar-filters {
+  display: flex;
+  gap: 10px;
+}
+
+.toolbar-filters input,
+.toolbar-filters select {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+/* ==========================================================================
+   Alerts
+   ========================================================================== */
+.alert {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+
+.alert-success {
+  background: #EAF2EE;
+  border-color: #BFD9CD;
+  color: var(--color-accent-hover);
+}
+
+.alert-error {
+  background: #F6E9E9;
+  border-color: #E3BEBE;
+  color: var(--color-danger-hover);
+}
+
+/* ==========================================================================
+   Dashboard columns
+   ========================================================================== */
+.dashboard-columns {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+.dashboard-columns section {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+.pagination {
+  display: flex;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+/* ==========================================================================
+   Empty state
+   ========================================================================== */
+.empty-state {
+  padding: 40px 0;
+  text-align: left;
+  color: var(--color-muted);
+}

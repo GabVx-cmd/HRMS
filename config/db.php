@@ -14,7 +14,7 @@
 class db {
     private string $host = 'localhost';
     private string $username = 'root';
-    private string $password = 'password';
+    private string $password = '';
     private string $dbname = 'hrms';
     private int $port = 3306;
     private ?PDO $conn = null;
