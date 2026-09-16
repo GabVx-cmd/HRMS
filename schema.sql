@@ -1,73 +1,79 @@
--- ============================================================
--- HRMS Database Schema
--- Generated from the ERD / Data Dictionary in the project
--- documentation report (Section E).
--- Safe to run even if the database doesn't exist yet.
--- ============================================================
+--------------------------------------------------------------------------
+-- CREATE DATABASE AND TABLES IF NOT EXISTS
+-- ALL TABLES ARE CREATED WITH APPROPRIATE CONSTRAINTS AND DATA TYPES
+-- THIS SCRIPT IS SAFE TO RUN MULTIPLE TIMES EVEN IF THE DATABASE AND TABLES ALREADY EXIST
+--------------------------------------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS hrms;
-USE hrms;
+CREATE DATABASE IF NOT EXISTS 'hrms'; -- Create the database if it doesn't exist
 
--- ------------------------------------------------------------
--- EMPLOYEES (central table)
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS employees (
-    employee_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name  VARCHAR(50)  NOT NULL,
-    last_name   VARCHAR(50)  NOT NULL,
-    email       VARCHAR(100) UNIQUE,
-    phone       VARCHAR(20),
-    address     VARCHAR(150),
-    date_hired  DATE,
-    department  VARCHAR(50),
-    position    VARCHAR(50),
-    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+--------------------------------------------------------------------------
+-- USERS TABLE 1:MANY RELATIONSHIP WITH EMPLOYEES TABLE
+--------------------------------------------------------------------------
 
--- ------------------------------------------------------------
--- USERS (1:1 with employees — login credentials + role)
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS users (
-    user_id     INT AUTO_INCREMENT PRIMARY KEY,
-    employee_id INT,
-    username    VARCHAR(50) UNIQUE NOT NULL,
-    password    VARCHAR(50) NOT NULL,
-    role        VARCHAR(50) NOT NULL,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-
--- ------------------------------------------------------------
--- ATTENDANCE (1:many with employees)
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS attendance (
-    attendance_id INT AUTO_INCREMENT PRIMARY KEY,
-    employee_id   INT NOT NULL,
-    log_date      DATE NOT NULL,
-    time_in       TIME,
-    time_out      TIME,
-    status        VARCHAR(20),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-
--- ------------------------------------------------------------
--- LEAVE_REQUEST (1:many with employees)
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS leave_request (
-    leave_id    INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS users ( 
+	user_id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT NOT NULL,
-    leave_type  VARCHAR(30),
-    start_date  DATE NOT NULL,
-    end_date    DATE NOT NULL,
-    reason      TEXT,
-    status      VARCHAR(20),
-    date_filed  DATE,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+    username VARCHAR(50) NOT NULL UNIQUE,
+    `password` VARCHAR(120) NOT NULL,
+    `role` VARCHAR(20) NOT NULL
 );
 
--- ------------------------------------------------------------
--- Sample data so the Dashboard/Employees list have something
--- to display on first test. Safe to delete once you have real data.
--- ------------------------------------------------------------
+--------------------------------------------------------------------------
+-- Add foreign key constraint to users table referencing employees table
+--------------------------------------------------------------------------
+
+ALTER TABLE users ADD CONSTRAINT fk_emp_id FOREIGN KEY (employee_id) REFERENCES employees(employee_id); 
+
+--------------------------------------------------------------------------
+-- EMPLOYEES TABLE 1:MANY RELATIONSHIP WITH ATTENDANCE AND LEAVE_REQUEST TABLES
+--------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS employees (
+	employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(13) NOT NULL UNIQUE,
+    `address` VARCHAR(120),
+    date_hired DATE NOT NULL,
+    department VARCHAR(30) NOT NULL,
+    `position` VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--------------------------------------------------------------------------
+-- ATTENDANCE TABLE 1:MANY RELATIONSHIP WITH EMPLOYEES TABLE
+--------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS attendance (
+	attendance_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT NOT NULL,
+    log_date DATE NOT NULL DEFAULT (CURDATE()),
+    time_in TIME NULL,
+    time_out TIME NULL,
+    status ENUM('PRESENT', 'LATE', 'ON LEAVE') NOT NULL DEFAULT 'PRESENT',
+    CONSTRAINT fk_empID_att FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+); 
+
+--------------------------------------------------------------------------
+-- LEAVE_REQUEST TABLE 1:MANY RELATIONSHIP WITH EMPLOYEES TABLE
+--------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS leave_request (
+	leave_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT NOT NULL,
+    leave_type VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason VARCHAR(120),
+    `status` ENUM('PENDING', 'ACCEPTED', 'REJECTED') NULL,
+    date_filed DATE NOT NULL,
+    CONSTRAINT fk_empID_lr FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
+--------------------------------------------------------------------------
+-- SAMPLE DATA INSERTION
+--------------------------------------------------------------------------
+
 INSERT INTO employees (first_name, last_name, email, phone, address, date_hired, department, position) VALUES
 ('Maria', 'Santos', 'maria.santos@example.com', '09171234567', 'Tarlac City', '2023-03-15', 'Human Resources', 'HR Officer'),
 ('Juan', 'Dela Cruz', 'juan.delacruz@example.com', '09181234567', 'San Isidro, Tarlac', '2022-11-01', 'IT', 'Systems Administrator'),
