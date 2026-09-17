@@ -44,12 +44,12 @@ class Attendance extends User{
         
         try {
             $query = "INSERT INTO " . $this->attTable . " (employee_id, log_date, time_in, status) 
-            VALUES (:employee_id, :log_date, :time_id, :status)";
+            VALUES (:employee_id, :log_date, :time_in, :status)";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
-            $stmt->bindParam('log_date', $logDate, PDO::PARAM_STR);
-            $stmt->bindParam('time_in', $timeIn, PDO::PARAM_STR);
-            $stmt->bindParam('status', $status, PDO::PARAM_STR);
+            $stmt->bindParam(':log_date', $logDate, PDO::PARAM_STR);
+            $stmt->bindParam(':time_in', $timeIn, PDO::PARAM_STR);
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
     
             return $stmt->execute();
         } catch (Throwable $e) {
@@ -144,7 +144,7 @@ class Attendance extends User{
     public function getAllAttendance(string $logDate): array {
         try {
             $query = "SELECT a.*, e.first_name, e.last_name, e.position, e.email, e.department FROM " . $this->attTable . " a 
-            INNER JOIN employees e ON a.employee_id = e.id";
+            INNER JOIN employees e ON a.employee_id = e.employee_id";
     
             if (!empty($logDate)) {
                 $query .= " WHERE log_date = :log_date";
@@ -177,22 +177,23 @@ class Attendance extends User{
     public function attendanceStats(int $employee_id, ?string $startDate, ?string $endDate): array {
         try {
             $endDate = $endDate ?? date('Y-m-d');
-            $startDate = $startDate ?? ((new DateTime('Y-m-d'))->modify('-1 month')->format('Y-m-d'));
+            $startDate = $startDate ?? ((new DateTime())->modify('-1 month')->format('Y-m-d'));
             $query = "SELECT 
                         employee_id,
                         COUNT(*) as total_attendance,
-                        SUM(CASE WHEN status = 'PRESENT') as days_present,
-                        SUM(CASE WHEN status = 'LATE') as days_late,
-                        SUM(CASE WHEN status = 'ON LEAVE') as days_on_leave,
-                        SUM(CASE WHEN time_out IS NULL) as days_absent
+                        SUM(CASE WHEN status = 'PRESENT' THEN 1 ELSE 0 END) as days_present,
+                        SUM(CASE WHEN status = 'LATE' THEN 1 ELSE 0 END) as days_late,
+                        SUM(CASE WHEN status = 'ON LEAVE' THEN 1 ELSE 0 END) as days_on_leave,
+                        SUM(CASE WHEN time_out IS NULL THEN 1 ELSE 0 END) as days_absent
                     FROM " . $this->attTable . "
-                    WHERE employee_id = :employee_id AND log_date BETWEEN :start_date AND :end_date";
+                    WHERE employee_id = :employee_id AND log_date BETWEEN :start_date AND :end_date
+                    GROUP BY employee_id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_INT);
             $stmt->bindParam(':start_date', $startDate, PDO::PARAM_STR);
             $stmt->bindParam(':end_date', $endDate, PDO::PARAM_STR);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
         } catch (Throwable $e) {
             error_log("Error fetching attendance stats: " . $e->getMessage());
             return [];
