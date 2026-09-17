@@ -348,6 +348,108 @@ tbody tr:hover { background: var(--color-surface); }
 }
 
 /* ==========================================================================
+   Login page
+   ========================================================================== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 32px;
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-brand .mark {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.login-brand .sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.login-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 24px;
+}
+
+.login-tabs a {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.login-tabs a:hover { text-decoration: none; }
+
+.login-tabs a.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.login-form .form-field {
+  margin-bottom: 16px;
+}
+
+.login-form .btn {
+  width: 100%;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Sidebar user info
+   ========================================================================== */
+.sidebar-user {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.sidebar-user .name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sidebar-user .role {
+  font-size: 12px;
+  color: var(--color-muted);
+  text-transform: capitalize;
+}
+
+.sidebar-user a {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
    Pagination
    ========================================================================== */
 .pagination {
