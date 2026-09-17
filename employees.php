@@ -11,6 +11,8 @@
  */
 $pageTitle = 'Employees';
 require_once __DIR__ . '/includes/db_connect.php';
+$requiredRole = 'admin_hr';
+require_once __DIR__ . '/includes/auth_guard.php';
 
 $search = trim($_GET['search'] ?? '');
 $department = trim($_GET['department'] ?? '');
@@ -90,6 +92,7 @@ require_once __DIR__ . '/includes/header.php';
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Department</th>
@@ -101,6 +104,7 @@ require_once __DIR__ . '/includes/header.php';
         <tbody>
             <?php foreach ($employees as $emp): ?>
                 <tr>
+                    <td><?php echo (int)$emp['employee_id']; ?></td>
                     <td><?php echo htmlspecialchars($emp['first_name'] . ' ' . $emp['last_name']); ?></td>
                     <td><?php echo htmlspecialchars($emp['email']); ?></td>
                     <td><?php echo htmlspecialchars($emp['department']); ?></td>
