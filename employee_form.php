@@ -10,6 +10,8 @@
  * it just runs whatever it's given against the database.
  */
 require_once __DIR__ . '/includes/db_connect.php';
+$requiredRole = 'admin_hr';
+require_once __DIR__ . '/includes/auth_guard.php';
 
 $isEdit = false;
 $employeeId = null;
