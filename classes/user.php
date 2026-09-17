@@ -38,7 +38,6 @@ class User {
      * @param string $password The password of the user
      * @return bool Returns true if the authentication is successful, false otherwise
      */
-
     public function login(string $username, string $password): bool {
         try {
             $query = "SELECT * FROM " . $this->table . " WHERE username = :username LIMIT 1";
@@ -62,6 +61,18 @@ class User {
             error_log("User login error: " . $e->getMessage());
         } 
         return false;
+    }
+
+    /**
+     * Sets the role on this object directly, without a full login().
+     * Needed because the User object is freshly created on every page
+     * load — it has no memory of a previous login() call from an
+     * earlier request. Pages that already know the role from the
+     * session (via auth_guard.php) use this to let isAdmin() work
+     * correctly for actions like createUser().
+     */
+    public function setRole(?string $role): void {
+        $this->role = $role;
     }
 
     /**
@@ -94,10 +105,10 @@ class User {
             }
             $query = "INSERT INTO " . $this->table . " (employee_id, username, password, role) VALUES (:employeeId, :username, :password, :role)";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam('employeeId', $employeeId, PDO::PARAM_INT);
-            $stmt->bindParam('username', $username, PDO::PARAM_STR);
-            $stmt->bindParam('password', $password, PDO::PARAM_STR);
-            $stmt->bindParam('role', $role, PDO::PARAM_STR);
+            $stmt->bindParam(':employeeId', $employeeId, PDO::PARAM_INT);
+            $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->bindParam(':role', $role, PDO::PARAM_STR);
             return $stmt->execute();
         } catch (Throwable $e) {
             error_log("User creation error: " . $e->getMessage());
