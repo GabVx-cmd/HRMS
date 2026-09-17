@@ -8,6 +8,8 @@
  */
 $pageTitle = 'Dashboard';
 require_once __DIR__ . '/includes/db_connect.php';
+$requiredRole = 'admin_hr';
+require_once __DIR__ . '/includes/auth_guard.php';
 
 // Empty search/department = no filtering. High limit so we effectively
 // get every record for the stats below (fine for a school-project dataset).
@@ -43,6 +45,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
     <a href="employee_form.php" class="btn btn-primary">Add employee</a>
 </div>
+
 <div class="stat-row">
     <div class="stat">
         <span class="value"><?php echo $totalEmployees; ?></span>
