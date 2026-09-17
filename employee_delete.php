@@ -5,6 +5,8 @@
  * this URL is ever hit, so no confirmation UI is needed here.
  */
 require_once __DIR__ . '/includes/db_connect.php';
+$requiredRole = 'admin_hr';
+require_once __DIR__ . '/includes/auth_guard.php';
 
 $employeeId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
