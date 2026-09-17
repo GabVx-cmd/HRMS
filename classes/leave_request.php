@@ -52,7 +52,7 @@ class LeaveRequest extends User{
     /**
      * Retrieves leave requests of employee in the database.
      * @param int $employee_id The ID of the employee whose leave requests are to be retrieved.
-     * @param string|null $status The status to filter leave requests by. It can be 'PENDING', 'APPROVED', or 'REJECTED'. If null, all leave requests for the employee are retrieved.
+     * @param string|null $status The status to filter leave requests by. It can be 'PENDING', 'ACCEPTED', or 'REJECTED'. If null, all leave requests for the employee are retrieved.
      * @return array The leave requests of the specified employee, or an empty array if no leave requests are found.
      */
     public function getLeaveRequests(int $employee_id, ?string $status): array {
@@ -77,7 +77,7 @@ class LeaveRequest extends User{
 
     /**
      * Retrieves all leave requests from the database, optionally filtered by status.
-     * @param string|null $status The status to filter leave requests by. It can be 'PENDING', 'APPROVED', or 'REJECTED'. If null, all leave requests are retrieved.
+     * @param string|null $status The status to filter leave requests by. It can be 'PENDING', 'ACCEPTED', or 'REJECTED'. If null, all leave requests are retrieved.
      * @return array An array of leave requests matching the specified status, or all leave requests if no status is provided.
      */
     public function getAllLeaveRequests(?string $status = null): array {    
@@ -85,7 +85,7 @@ class LeaveRequest extends User{
             $query = "SELECT * FROM " . $this->leaveTable;
             match($status) {
                 "PENDING" => $query .= " WHERE status = 'PENDING'",
-                "APPROVED" => $query .= " WHERE status = 'APPROVED'",
+                "ACCEPTED" => $query .= " WHERE status = 'ACCEPTED'",
                 "REJECTED" => $query .= " WHERE status = 'REJECTED'",
                 default => ""
             };
@@ -100,16 +100,16 @@ class LeaveRequest extends User{
     }
 
     /**
-     * Updates the leave request status of employee
-     * @param int $employee_id The ID of the employee whose leave request status is to be updated.
-     * @param string $status The new status to be set for the leave request. It can be 'PENDING', 'APPROVED', or 'REJECTED'.
-     * @return bool The result of the update operation. Returns true if the status was successfully updated, false otherwise.
+     * Updates the status of one specific leave request.
+     * @param int $leave_id The ID of the leave request to update.
+     * @param string $status The new status. Must be 'PENDING', 'ACCEPTED', or 'REJECTED'.
+     * @return bool The result of the update operation.
      */
-    public function updateLeaveStatus(int $employee_id, string $status): bool {
+    public function updateLeaveStatus(int $leave_id, string $status): bool {
         try {
-            $query = "UPDATE ". $this->leaveTable . " SET status = :status WHERE employee_id = :employee_id";
+            $query = "UPDATE ". $this->leaveTable . " SET status = :status WHERE leave_id = :leave_id";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":employee_id", $employee_id, PDO::PARAM_INT);
+            $stmt->bindParam(":leave_id", $leave_id, PDO::PARAM_INT);
             $stmt->bindParam(":status", $status, PDO::PARAM_STR);
             return $stmt->execute();
         } catch (Throwable $e) {
