@@ -15,7 +15,7 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <div class="empty-state">
-    My Attendance and My Leave Requests pages are coming next — this is a placeholder so your login flow works end-to-end in the meantime.
+    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cupiditate facere delectus alias quos accusantium soluta illum provident, impedit eaque sunt, labore expedita nesciunt, reprehenderit consequatur vitae corrupti doloremque natus ab?
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
