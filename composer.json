@@ -1,0 +1,17 @@
+{
+    "name": "owner/human_resource_management_system",
+    "autoload": {
+        "psr-4": {
+            "Owner\\HumanResourceManagementSystem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "GabVx-cmd",
+            "email": "gabzdeleon1001@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.7"
+    }
+}
