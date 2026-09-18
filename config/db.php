@@ -21,11 +21,12 @@ class db {
     private ?PDO $conn = null;
 
     public function __construct() {
-        $this->host = $_ENV['DB_HOST'] ?? 'localhost';
-        $this->username = $_ENV['DB_USER'] ??'root';
-        $this->password = $_ENV['DB_PASS'] ??'password';
-        $this->dbname = $_ENV['DB_NAME'] ??'human_resource_management_system';
-        $this->port = isset($_ENV['DB_PORT']) ? (int)$_ENV['DB_PORT'] : 3306;
+        $this->host     = getenv('DB_HOST')     ?: ($_SERVER['DB_HOST']     ?? ($_ENV['DB_HOST']     ?? '127.0.0.1'));
+        $this->username = getenv('DB_USER')     ?: ($_SERVER['DB_USER']     ?? ($_ENV['DB_USER']     ?? 'root'));
+        $this->password = getenv('DB_PASS')     ?: ($_SERVER['DB_PASS']     ?? ($_ENV['DB_PASS']     ?? 'password'));
+        $this->dbname   = getenv('DB_NAME')     ?: ($_SERVER['DB_NAME']     ?? ($_ENV['DB_NAME']     ?? 'human_resource_management_system'));
+        $portVal        = getenv('DB_PORT')     ?: ($_SERVER['DB_PORT']     ?? ($_ENV['DB_PORT']     ?? 3306));
+        $this->port     = (int)$portVal;
 
         $this->ssl_ca = __DIR__ .'/../certs/DigiCertGlobalRootG2.crt.pem';
     }
