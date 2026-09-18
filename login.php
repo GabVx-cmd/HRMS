@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post" class="login-form">
                 <input type="hidden" name="login_type" value="admin">
                 <div class="form-field">
-                    <label for="username">Email</label>
+                    <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-field">
