@@ -16,6 +16,10 @@ require_once __DIR__ . '/../classes/user.php';
 require_once __DIR__ . '/../classes/employee.php';
 require_once __DIR__ . '/../classes/attendance.php';
 require_once __DIR__ . '/../classes/leave_request.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
 $database = new db();
 $conn = $database->getConnection();

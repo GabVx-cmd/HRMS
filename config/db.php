@@ -12,12 +12,23 @@
  * Change the database credentials as per your setup
  */
 class db {
-    private string $host = 'localhost';
-    private string $username = 'root';
-    private string $password = '';
-    private string $dbname = 'hrms';
-    private int $port = 3306;
+    private string $host;
+    private string $username;
+    private string $password;
+    private string $dbname;
+    private int $port;
+    private string $ssl_ca;
     private ?PDO $conn = null;
+
+    public function __construct() {
+        $this->host = $_ENV['DB_HOST'] ?? 'localhost';
+        $this->username = $_ENV['DB_USER'] ??'root';
+        $this->password = $_ENV['DB_PASS'] ??'password';
+        $this->dbname = $_ENV['DB_NAME'] ??'human_resource_management_system';
+        $this->port = isset($_ENV['DB_PORT']) ? (int)$_ENV['DB_PORT'] : 3306;
+
+        $this->ssl_ca = __DIR__ .'/../certs/DigiCertGlobalRootG2.crt.pem';
+    }
 
     /**
      * Establishes a PDO connection to the database.
@@ -33,6 +44,7 @@ class db {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Set error mode to exception
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Set default fetch mode to associative array
                 PDO::ATTR_EMULATE_PREPARES => false, // Disable emulation of prepared statements for better security
+                PDO::MYSQL_ATTR_SSL_CA => $this->ssl_ca,
             ];
 
             $this->conn = new PDO($dsn, $this->username, $this->password, $options);
@@ -42,7 +54,7 @@ class db {
             error_log("Database connection error: " . $e->getMessage());
 
             // Display a generic error message to the user without exposing sensitive details
-            die("Database connection failed. Please try again later.");
+            die("Database connection failed. Please try again later." );
         }
         return $this->conn;
     }
