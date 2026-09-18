@@ -19,7 +19,7 @@ require_once __DIR__ . '/../classes/leave_request.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->sageLoad();
+$dotenv->safeLoad();
 
 $database = new db();
 $conn = $database->getConnection();
